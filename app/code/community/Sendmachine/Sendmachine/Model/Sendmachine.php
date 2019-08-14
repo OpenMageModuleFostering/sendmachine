@@ -68,7 +68,7 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 				foreach ($key as $k => $v) {
 
 					if (is_array($v) && $walk_array)
-						$this->_walkArray($this->appData, [$k => $v]);
+						$this->_walkArray($this->appData, array($k => $v));
 					else
 						$this->appData[$k] = $v;
 				}
@@ -174,7 +174,7 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 		return NULL;
 	}
 
-	public function addCronjob($method = NULL, $args = []) {
+	public function addCronjob($method = NULL, $args = array()) {
 
 		if ($method) {
 

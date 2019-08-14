@@ -30,7 +30,7 @@ class Lists {
 	 */
 	public function get($limit = 25, $offset = 0) {
 
-		$params = ['limit' => $limit, 'offset' => $offset];
+		$params = array('limit' => $limit, 'offset' => $offset);
 		return $this->master->request('/list', 'GET', $params);
 	}
 
@@ -61,7 +61,7 @@ class Lists {
 	 */
 	public function recipients($list_id, $limit = 25, $offset = 0, $filter = 'all', $order_by = 'email', $segment_id = 0) {
 
-		$params = ['limit' => $limit, 'offset' => $offset, 'filter' => $filter, 'orderby' => $order_by, 'sid' => $segment_id];
+		$params = array('limit' => $limit, 'offset' => $offset, 'filter' => $filter, 'orderby' => $order_by, 'sid' => $segment_id);
 		return $this->master->request('/list/' . $list_id, 'GET', $params);
 	}
 	
@@ -131,7 +131,7 @@ class Lists {
 	 */
 	public function create($data) {
 
-		$params = ['list_details' => $data];
+		$params = array('list_details' => $data);
 		return $this->master->request('/list', 'POST', $params);
 	}
 
@@ -149,7 +149,7 @@ class Lists {
 	 */
 	public function manage_contacts($list_id, $emails = "", $action = 'subscribe', $list_name = null) {
 
-		$params = ['contacts' => $emails, 'action' => $action, 'name' => $list_name];
+		$params = array('contacts' => $emails, 'action' => $action, 'name' => $list_name);
 		return $this->master->request('/list/' . $list_id, 'POST', $params);
 	}
 	
@@ -202,7 +202,7 @@ class Lists {
 	 */
 	public function edit($list_id, $data){
 		
-		$params = ['list_details' => $data];
+		$params = array('list_details' => $data);
 		return $this->master->request('/list/'.$list_id.'/details', 'POST', $params);
 	}
 
@@ -246,7 +246,7 @@ class Lists {
 	 */
 	public function list_segments($list_id, $limit = 25, $offset = 0, $orderby = "adate", $sort = "desc") {
 
-		$params = ['limit' => $limit, 'offset' => $offset, 'orderby' => $orderby, 'sort' => $sort];
+		$params = array('limit' => $limit, 'offset' => $offset, 'orderby' => $orderby, 'sort' => $sort);
 		return $this->master->request('/list/'.$list_id.'/segment', 'GET', $params);
 	}
 	

@@ -47,7 +47,7 @@ class Sendmachine_Sendmachine_Helper_Data extends Mage_Core_Helper_Abstract {
 
 				$list_fields .= $v['label'] . " $required<br>";
 
-				if (in_array($v['type'], ["text", "number", "email", "date", "birthday"])) {
+				if (in_array($v['type'], array("text", "number", "email", "date", "birthday"))) {
 					$placeholder = "";
 
 					if ($v['type'] == "date")
@@ -93,7 +93,7 @@ class Sendmachine_Sendmachine_Helper_Data extends Mage_Core_Helper_Abstract {
 			if (!isset($v['form_name']))
 				$v['form_name'] = uc_words(strtolower($v['name']));
 
-			$_fields[$v['name']] = ['label' => $v['form_name'], 'visible' => $v['visible'] ? 1 : 0, 'required' => $v['required'] ? 1 : 0, 'type' => $v['cf_type']];
+			$_fields[$v['name']] = array('label' => $v['form_name'], 'visible' => $v['visible'] ? 1 : 0, 'required' => $v['required'] ? 1 : 0, 'type' => $v['cf_type']);
 
 			if (isset($v['options']))
 				$_fields[$v['name']]['options'] = $v['options'];

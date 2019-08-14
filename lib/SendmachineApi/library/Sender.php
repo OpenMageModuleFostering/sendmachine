@@ -30,7 +30,7 @@ class Sender {
 	 */
 	public function get($status = 'active', $type = 'email', $group = null, $limit = null, $offset = null) {
 
-		$params = ['status' => $status, 'type' => $type, 'group' => $group, 'limit' => $limit, 'offset' => $offset];
+		$params = array('status' => $status, 'type' => $type, 'group' => $group, 'limit' => $limit, 'offset' => $offset);
 		return $this->master->request('/sender', 'GET', $params);
 	}
 
@@ -48,7 +48,7 @@ class Sender {
 	 */
 	public function add($email) {
 
-		$params = ['type' => 'email', 'address' => $email];
+		$params = array('type' => 'email', 'address' => $email);
 		return $this->master->request('/sender', 'POST', $params);
 	}
 	

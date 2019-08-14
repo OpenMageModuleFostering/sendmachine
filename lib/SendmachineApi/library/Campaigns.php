@@ -34,7 +34,7 @@ class Campaigns {
 	 */
 	public function get($filter = 'all', $orderby = 'cdate', $offset = 0, $limit = 25, $search = null) {
 
-		$params = ['filter' => $filter, 'orderby' => $orderby, 'offset' => $offset, 'limit' => $limit, 'search' => $search];
+		$params = array('filter' => $filter, 'orderby' => $orderby, 'offset' => $offset, 'limit' => $limit, 'search' => $search);
 		return $this->master->request('/campaigns', 'GET', $params);
 	}
 
@@ -105,7 +105,7 @@ class Campaigns {
 	 */
 	public function schedule($campaign_id, $date = "") {
 
-		$params = ['date' => $date];
+		$params = array('date' => $date);
 		return $this->master->request('/campaigns/schedule/' . $campaign_id, 'POST', $params);
 	}
 
@@ -133,7 +133,7 @@ class Campaigns {
 	 */
 	public function test($campaign_id, $addresses = "") {
 
-		$params = ['addresses' => $addresses];
+		$params = array('addresses' => $addresses);
 		return $this->master->request('/campaigns/test/' . $campaign_id, 'POST', $params);
 	}
 

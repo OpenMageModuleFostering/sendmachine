@@ -220,7 +220,7 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 			$logId = $this->sm->addImportExportLog('import');
 			$listId = $this->sm->get('selected_contact_list');
 
-			$this->sm->addCronjob('importToNewsletter', [$store, $logId, $listId]);
+			$this->sm->addCronjob('importToNewsletter', array($store, $logId, $listId));
 
 			Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Import queued'));
 		} else {

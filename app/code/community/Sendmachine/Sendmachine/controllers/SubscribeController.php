@@ -30,7 +30,7 @@ class Sendmachine_Sendmachine_SubscribeController extends Mage_Core_Controller_F
 			if (!$response) {
 
 				$listId = $sm->get('selected_contact_list');
-				if ($sm->subscribeToList([$arr], $listId))
+				if ($sm->subscribeToList(array($arr), $listId))
 					$response = array('code' => 1, 'message' => $this->__('You have been successfully subscribed'));
 				else
 					$response = array('code' => 0, 'message' => $this->__('Something went wrong.You were not subscribed'));

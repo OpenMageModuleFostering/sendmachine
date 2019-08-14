@@ -83,11 +83,11 @@ class SendmachineApiClient {
 
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($params)]);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($params)));
 				break;
 			case 'DELETE':
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-				curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 				break;
 		}
 		
@@ -144,7 +144,7 @@ class SendmachineApiClient {
 
 	public function check_config() {
 
-		$config_paths = [".sendmachine.conf", "/etc/.sendmachine.conf"];
+		$config_paths = array(".sendmachine.conf", "/etc/.sendmachine.conf");
 		$username = null;
 		$password = null;
 
@@ -165,7 +165,7 @@ class SendmachineApiClient {
 			}
 		}
 
-		return [$username, $password];
+		return array($username, $password);
 	}
 
 	public function set_error($result) {

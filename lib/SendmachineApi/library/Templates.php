@@ -26,7 +26,7 @@ class Templates {
 	 */
 	public function get($limit = 25, $offset = 0) {
 
-		$params = ['limit' => $limit, 'offset' => $offset];
+		$params = array('limit' => $limit, 'offset' => $offset);
 		return $this->master->request('/templates', 'GET', $params);
 	}
 
@@ -56,7 +56,7 @@ class Templates {
 	 */
 	public function create($name, $body = "") {
 
-		$params = ['name' => $name, 'body' => $body];
+		$params = array('name' => $name, 'body' => $body);
 		return $this->master->request('/templates', 'POST', $params);
 	}
 
@@ -71,7 +71,7 @@ class Templates {
 	 */
 	public function update($template_id, $body = "") {
 
-		$params = ['body' => $body];
+		$params = array('body' => $body);
 		return $this->master->request('/templates/' . $template_id, 'POST', $params);
 	}
 
