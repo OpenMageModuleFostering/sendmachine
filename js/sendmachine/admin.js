@@ -86,9 +86,15 @@ function smExport(url) {
 }
 
 function smRefreshCachedLists(url) {
-
+    
+    var website = document.getElementById('website_lists').value;
+    var store = document.getElementById('store_lists').value;
 	new Ajax.Request(url, {
 		method: 'post',
+        parameters: {
+            website: website,
+			store: store
+		},
 		onSuccess: function () {
 			location.reload();
 		}

@@ -60,8 +60,9 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 
 		if ($key) {
 
-			if (is_null($this->appData))
+			if (is_null($this->appData)) {
 				$this->get();
+            }
 
 			if (is_array($key)) {
 
@@ -74,14 +75,16 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 				}
 			} else {
 
-				if (count($value) && $walk_array)
+				if (count($value) && $walk_array) {
 					$this->_walkArray($this->appData, $value);
-				else
+                } else {
 					$this->appData[$key] = $value;
+                }
 			}
 
-			if ($commit)
+			if ($commit) {
 				$this->commit();
+            }
 
 			return true;
 		}
@@ -337,7 +340,7 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 				$template_name = $template_list[trim($template_id)]['label'];
 
 				return array(
-					"header_name" => "X-Sendmachine-Campaign",
+					"header_name" => "X-Sendmachine-Tag",
 					"header_value" => $trCmpPrexif . $template_name . $trCmpSuffix
 				);
 			}

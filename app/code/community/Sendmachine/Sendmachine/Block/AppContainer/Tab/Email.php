@@ -21,6 +21,7 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_Email extends Mage_Adminhtm
 
 
 		$fieldset = $form->addFieldset('email_fieldset', array('legend' => Mage::helper('sendmachine')->__('Email Settings')));
+        $tranzactionalfieldset = $form->addFieldset('tranzactional_fieldset', array('legend' => Mage::helper('sendmachine')->__('Transactional groups settings')));
 		if($this->store) {
 			$testfieldset = $form->addFieldset('emailtest_fieldset', array('legend' => Mage::helper('sendmachine')->__('Test Configuration')));
 		}
@@ -68,33 +69,33 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_Email extends Mage_Adminhtm
 			'after_element_html' => '<small>' . Mage::helper('sendmachine')->__("Note! If you set a 'From name' here, all other 'from names' will be overriden") . '<small>'
 		));
 
-		$fieldset->addField('transactional_campaigns_enabled', 'select', array(
+		$tranzactionalfieldset->addField('transactional_campaigns_enabled', 'select', array(
 			'name' => 'transactional_campaigns_enabled',
-			'label' => Mage::helper('sendmachine')->__('Use transactional emails'),
-			'title' => Mage::helper('sendmachine')->__('Use transactional emails'),
+			'label' => Mage::helper('sendmachine')->__('Group transactional emails'),
+			'title' => Mage::helper('sendmachine')->__('Group transactional emails'),
 			'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray()
 		));
 
-		$fieldset->addField('transactional_campaign_prefix', 'text', array(
+		$tranzactionalfieldset->addField('transactional_campaign_prefix', 'text', array(
 			'name' => 'transactional_campaign_prefix',
-			'label' => Mage::helper('sendmachine')->__('Transactional campaigns prefix'),
-			'title' => Mage::helper('sendmachine')->__('Transactional campaigns prefix'),
-			'after_element_html' => '<small>Campaign\'s prefix<small>'
+			'label' => Mage::helper('sendmachine')->__('Transactional emails prefix'),
+			'title' => Mage::helper('sendmachine')->__('Transactional emails prefix'),
+			'after_element_html' => '<small>Grouped email\'s prefix<small>'
 		));
 
-		$fieldset->addField('transactional_campaign_areas', 'multiselect', array(
+		$tranzactionalfieldset->addField('transactional_campaign_areas', 'multiselect', array(
 			'name' => 'transactional_campaign_areas',
-			'label' => Mage::helper('sendmachine')->__('Transactional campaigns areas'),
-			'title' => Mage::helper('sendmachine')->__('Transactional campaigns areas'),
+			'label' => Mage::helper('sendmachine')->__('Events to group'),
+			'title' => Mage::helper('sendmachine')->__('Events to group'),
 			'values' => Mage::getModel('sendmachine/source_transactionalCampAreas')->toOptionArray(),
 			'after_element_html' => '<small>' . Mage::helper('sendmachine')->__("Note! Hold 'ctrl' and click the area you want to select/deselect for multiple selection") . '</small>'
 		));
 
-		$fieldset->addField('transactional_campaign_suffix', 'text', array(
+		$tranzactionalfieldset->addField('transactional_campaign_suffix', 'text', array(
 			'name' => 'transactional_campaign_suffix',
-			'label' => Mage::helper('sendmachine')->__('Transactional campaigns suffix'),
-			'title' => Mage::helper('sendmachine')->__('Transactional campaigns suffix'),
-			'after_element_html' => '<small>Campaign\'s suffix<small>'
+			'label' => Mage::helper('sendmachine')->__('Transactional emails suffix'),
+			'title' => Mage::helper('sendmachine')->__('Transactional emails suffix'),
+			'after_element_html' => '<small>Grouped email\'s suffix<small>'
 		));
 
 		if ($this->store) {

@@ -281,7 +281,10 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 	public function refreshCachedListsAction() {
 
-		if ($this->sm->apiConnected()) {
+        $this->sm->setWebsite($this->getRequest()->getParam('website'));
+        $this->sm->setStore($this->getRequest()->getParam('store'));
+
+        if ($this->sm->apiConnected()) {
 
 			if ($resp = $this->sm->fetchContactLists()) {
 
