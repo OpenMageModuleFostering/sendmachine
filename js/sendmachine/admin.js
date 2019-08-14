@@ -101,14 +101,29 @@ function smRefreshCachedLists(url) {
 	});
 }
 
-function resetToParent() {
-	
-	var input = document.createElement("input");
+function initResetToParent(disable, area) {
+    
+    var fieldset = document.getElementById(area + '_fieldset');
+    
+    if(fieldset) {
+        
+        fieldset.style.position = "relative";
+        
+        var node = document.createElement("DIV");
+        node.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;background:rgba(255,255,255,0.3);display:none;");
+        node.setAttribute("id", "disabled_overlay_" + area);
+        fieldset.appendChild(node);
+        
+        resetToParent(disable, area);
+    }
+}
 
-	input.setAttribute("type", "hidden");
-	input.setAttribute("name", "reset_to_parent");
-	input.setAttribute("value", "1");
+function resetToParent(disable, area) {
 
-	document.getElementById("edit_form").appendChild(input);
-	editForm.submit();
+    var overlay = document.getElementById("disabled_overlay_" + area);
+
+    if (overlay) {
+
+        overlay.style.display = disable ? "block" : "none";
+    }
 }

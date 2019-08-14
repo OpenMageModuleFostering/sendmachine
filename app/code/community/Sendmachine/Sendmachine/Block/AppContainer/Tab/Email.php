@@ -3,25 +3,33 @@
 class Sendmachine_Sendmachine_Block_AppContainer_Tab_Email extends Mage_Adminhtml_Block_Widget_Form {
 
 	private $store = null;
+    private $website = null;
 	
 	protected function _prepareForm() {
 
 		$sm = Mage::registry('sm_model');
 		$form = new Varien_Data_Form(array(
-			'id' => 'edit_form',
-			'action' => $this->getUrl('*/*/save'),
-			'method' => 'post'
-				)
-		);
+            'id' => 'edit_form',
+            'action' => $this->getUrl('*/*/save'),
+            'method' => 'post'
+        ));
 
-		$request = Mage::app()->getRequest();
+        $request = Mage::app()->getRequest();
 		$this->store = $request->getParam('store');
+        $this->website = $request->getParam('website');
 		
 		$form->setUseContainer(true);
-
-
-		$fieldset = $form->addFieldset('email_fieldset', array('legend' => Mage::helper('sendmachine')->__('Email Settings')));
-        $tranzactionalfieldset = $form->addFieldset('tranzactional_fieldset', array('legend' => Mage::helper('sendmachine')->__('Transactional groups settings')));
+        
+        $defaults = $sm->get("is_default");
+        
+        $disabled_email = isset($defaults['email']) ? $defaults['email'] : true;
+        $checkbox_email = $sm->resetvaluescheckbox($this->store, $this->website, $disabled_email, "email");
+		$fieldset = $form->addFieldset('email_fieldset', array('legend' => Mage::helper('sendmachine')->__('Email Settings' . $checkbox_email)));
+        
+        $disabled_transactional = isset($defaults['transactional']) ? $defaults['transactional'] : true;
+        $checkbox_tranzactional = $sm->resetvaluescheckbox($this->store, $this->website, $disabled_transactional, "transactional");
+        $tranzactionalfieldset = $form->addFieldset('transactional_fieldset', array('legend' => Mage::helper('sendmachine')->__('Transactional groups settings' . $checkbox_tranzactional)));
+        
 		if($this->store) {
 			$testfieldset = $form->addFieldset('emailtest_fieldset', array('legend' => Mage::helper('sendmachine')->__('Test Configuration')));
 		}
@@ -33,7 +41,7 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_Email extends Mage_Adminhtm
 		
 		$fieldset->addField('website_email', 'hidden', array(
 			'name' => 'website',
-			'value' => $request->getParam('website')
+			'value' => $request->getParam('website'),
 		));
 		
 		$fieldset->addField('store_email', 'hidden', array(

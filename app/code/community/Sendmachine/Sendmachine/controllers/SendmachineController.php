@@ -25,7 +25,6 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 		$request = Mage::app()->getRequest();
 		$website = $request->getParam('website');
 		$store = $request->getParam('store');
-		$button_data = null;
 
 		$this->sm->setWebsite($website);
 		$this->sm->setStore($store, false);
@@ -44,28 +43,11 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 			$conflicts = implode("</li><li>", $conflicts);
 			Mage::getSingleton('core/session')->addError("<span>Detected overwrite conflict:</span><ul style='list-style-type: disc;margin-top: 5px;'><li>$conflicts</li></ul>");
 		}
-		
-		if ($website AND $store) {
-			$button_data = array(
-				'label' => $this->__('Reset values to website'),
-				'class' => 'reset_to_parent',
-				'onclick' => "resetToParent('" . Mage::helper('adminhtml')->getUrl('adminhtml/sendmachine/resetoparent') . "', '$website', '$store', 'website')"
-			);
-		} elseif ($website) {
-			$button_data = array(
-				'label' => $this->__('Reset values to default'),
-				'class' => 'reset_to_parent',
-				'onclick' => "resetToParent('" . Mage::helper('adminhtml')->getUrl('adminhtml/sendmachine/resetoparent') . "', '$website', '$store', 'default')"
-			);
-		}
 
 		$this->loadLayout();
-		$this->_setActiveMenu('system/sendmachine');
+		$this->_setActiveMenu('sendmachine/sendmachine');
 		$this->_addContent($this->getLayout()->createBlock('adminhtml/system_config_switcher'));
-		if($button_data) {
-			$this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', array('tab' => $tab))->addButton('reset_to_parent', $button_data, -1, 1));
-		}
-		else $this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', array('tab' => $tab)));
+		$this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', array('tab' => $tab)));
 		$this->_addLeft($this->getLayout()->createBlock('sendmachine/appContainer_tabs'));
 		$this->getLayout()->getBlock('head')->addJs("sendmachine/admin.js");
 		$this->renderLayout();
@@ -95,7 +77,8 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 		$tab = isset($params['tab']) ? $params['tab'] : "index";
 		$website = $params['website'];
 		$store = $params['store'];
-		
+        $override_details = isset($params['override_details']) ? $params['override_details'] : false;
+        
 		unset($params['tab']);
 		unset($params['limit']);
 		unset($params['page']);
@@ -103,27 +86,40 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 		unset($params['form_key']);
 		unset($params['website']);
 		unset($params['store']);
-		
-		if(isset($params['reset_to_parent']) AND $params['reset_to_parent'] AND ($website OR $store)) {
-			
-			if($store AND $website) {
-				$this->sm->setWebsite($website);
-				$this->sm->setStore(null, false);				
-			}
-			else {
-				$this->sm->setWebsite(null);
-				$this->sm->setStore(null, false);
-			}
-			
-			$_params = $this->sm->get();
-			foreach($params as $k => &$v) {
-				$v = isset($_params[$k]) ? $_params[$k] : "";
-			}
-		}
-		
-		$this->sm->setWebsite($website);
-		$this->sm->setStore($store);
+        unset($params['override_details']);
 
+		if ($override_details AND is_array($override_details) AND ( $website OR $store)) {
+
+            foreach ($override_details as $area => $do_override) {
+
+                if ($do_override) {
+
+                    if ($store AND $website) {
+                        $this->sm->setWebsite($website);
+                        $this->sm->setStore(null, false);
+                        $scope = "";
+                    } else {
+                        $this->sm->setWebsite(null);
+                        $this->sm->setStore(null, false);
+                        $scope = "";
+                    }
+
+                    if (($_params = $this->sm->getArea($area)) && is_array($_params)) {
+
+                        $params = array_merge($params, $_params);
+                    }
+                    $params['is_default'][$area] = 1;
+                } else {
+                    $params['is_default'][$area] = 0;
+                }
+            }
+        }
+
+        $this->sm->setWebsite($website);
+		$this->sm->setStore($store);
+        
+        $this->sm->resetData();
+        
 		$initial_credentials = $this->sm->getCredentials();
 		$initial_listid = $this->sm->get('selected_contact_list');
 		$initial_smtp_encryption = $this->sm->get('smtp_encryption');
@@ -165,6 +161,8 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 		}
 
 		$this->sm->commit();
+        $this->sm->updateChildrens();
+        
 
 		if (!$errorHandled) {
 			Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Successfully saved'));
@@ -303,8 +301,16 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 			Mage::getSingleton('adminhtml/session')->addError($this->__('Api not connected'));
 		}
 	}
+    
+    public function resetvaluesAction() {
 
-	private function _initApp() {
+        $this->sm->setWebsite($this->getRequest()->getParam('website'));
+        $this->sm->setStore($this->getRequest()->getParam('store'));
+        
+        Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Hello'));
+    }
+
+    private function _initApp() {
 
 		$this->sm->set('api_connected', true);
 		$this->sm->set('plugin_enabled', true);

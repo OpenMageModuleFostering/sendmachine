@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<menu>
-		<system>
-			<children>
-				<sendmachine translate="title" module="sendmachine">
-					<title>Sendmachine</title>
-					<sort_order>110</sort_order>
-					<action>adminhtml/sendmachine</action>
-				</sendmachine>
-			</children>
-		</system>
-	</menu>
+    <menu>
+        <sendmachine module="sendmachine">
+            <title>Sendmachine</title>
+            <sort_order>110</sort_order>
+            <children>
+                <sendmachine translate="title" module="sendmachine">
+                    <title>Configuration</title>
+                    <sort_order>110</sort_order>
+                    <action>adminhtml/sendmachine</action>
+                </sendmachine>
+            </children>
+        </sendmachine>
+    </menu>
 </config>

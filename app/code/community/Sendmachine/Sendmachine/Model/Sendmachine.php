@@ -32,6 +32,12 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 	public function getStore() {
 		return $this->store;
 	}
+    
+    public function resetData() {
+        
+        Mage::app()->getCacheInstance()->cleanType('config');
+        $this->appData = NULL;
+    }
 
 	public function get($key = NULL, $forceFetch = false) {
 
@@ -385,5 +391,110 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 			}
 		}
 	}
+    
+    public function resetvaluescheckbox($storeid = "", $websiteid = "", $checked = false, $action = "") {
+
+        $toret = "";
+
+        if ($storeid || $websiteid) {
+            
+            $scope = $storeid ? "website" : "default";
+            $jsresetaction = "onchange='resetToParent(this.checked,\"$action\")'";
+            
+            $checkbox = '<input value="1" name="override_details[' . $action . ']" ' . $jsresetaction . ' ' . ($checked ? "checked" : "") . ' type="checkbox"/>';
+            $input = '<input value="0" name="override_details[' . $action . ']" type="hidden">';
+            $label = '<label style="color: white;">' . $input . " " . $checkbox . ' Use ' . $scope . ' values</label>';
+            $toret = ' <span style="margin-left: 10px;">[ ' . $label . ']</span>';
+            $toret .= '<img src="" onerror="initResetToParent(\'' . $checked . '\', \'' . $action . '\')">';
+        }
+
+        return $toret;
+    }
+
+    public function getArea($needed_areas = "") {
+
+        $areas = array(
+            "email" => array("email_enabled", "smtp_encryption", "from_email", "from_name"),
+            "transactional" => array("transactional_campaigns_enabled", "transactional_campaign_prefix", "transactional_campaign_areas", "transactional_campaign_suffix"),
+            "general" => array("plugin_enabled", "api_username", "api_password"),
+            "lists" => array("selected_contact_list", "keep_users_synced", "import_subscribers_limit", "export_subscribers_limit", "enable_subscribe_popup", "popup_show_after_page", "popup_delay", "hide_after_subscribe", "popup_text_header", "list_custom_fields","contact_lists")
+        );
+
+        $known_areas = array_keys($areas);
+        
+        $values = $this->get();
+        $toret = NULL;
+        
+        if (!is_array($needed_areas)) {
+            $needed_areas = array($needed_areas);
+        }
+
+        foreach ($needed_areas as $area) {
+
+            if (!in_array($area, $known_areas)) {
+                continue;
+            }
+
+            foreach ($areas[$area] as $v) {
+                $toret[$v] = $values[$v];
+            }
+        }
+
+        return $toret;
+    }
+    
+    public function updateChildrens() {
+
+        $content = $this->get();
+        
+        if(!$this->website AND !$this->store) {
+
+            foreach(Mage::app()->getWebsites() as $website) {
+
+                $this->setWebsite($website->getCode());
+                $this->setStore(null, false);
+                
+                $this->_doUpdateTarget($content);
+                
+                foreach($website->getStores() as $store) {
+                    
+                    $this->setWebsite($website->getCode());
+                    $this->setStore($store->getCode());
+                    
+                    $this->_doUpdateTarget($content);
+                }
+            }
+            
+        } elseif(!$this->store && $this->website) {
+            
+            $website = Mage::app()->getWebsite($this->website);
+            foreach($website->getStores() as $store) {
+                
+                $this->setWebsite($this->website);
+                $this->setStore($store->getCode());
+
+                $this->_doUpdateTarget($content);
+            }
+        }
+        
+    }
+    
+    private function _doUpdateTarget($parent_data = array()) {
+
+        $this->resetData();
+        
+        $update_data = array();
+        $areas = array_keys(array_filter($this->get("is_default")));
+
+        if ($areas && ($target_data = $this->getArea($areas)) && is_array($target_data)) {
+            
+            foreach($target_data as $target_key => $target_value) {
+                $update_data[$target_key] = $parent_data[$target_key];
+            }
+            
+            $this->set($update_data);
+            $this->commit();
+        }
+    }
 
 }

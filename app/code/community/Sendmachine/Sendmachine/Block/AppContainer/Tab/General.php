@@ -2,6 +2,9 @@
 
 class Sendmachine_Sendmachine_Block_AppContainer_Tab_General extends Mage_Adminhtml_Block_Widget_Form {
 
+	private $store = null;
+    private $website = null;
+    
 	protected function _prepareForm() {
 
 		$sm = Mage::registry('sm_model');
@@ -12,9 +15,16 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_General extends Mage_Adminh
 		));
 		
 		$request = Mage::app()->getRequest();
+		$this->store = $request->getParam('store');
+        $this->website = $request->getParam('website');
+		
 		$form->setUseContainer(true);
-
-		$fieldset = $form->addFieldset('general_fieldset', array('legend' => Mage::helper('sendmachine')->__('General Settings')));
+        
+        $defaults = $sm->get("is_default");
+        
+        $disabled_general = isset($defaults['general']) ? $defaults['general'] : true;
+        $checkbox_general = $sm->resetvaluescheckbox($this->store, $this->website, $disabled_general, "general");
+		$fieldset = $form->addFieldset('general_fieldset', array('legend' => Mage::helper('sendmachine')->__('General Settings' . $checkbox_general)));
 
 		$fieldset->addField('tab_general', 'hidden', array(
 			'name' => 'tab',
@@ -30,7 +40,7 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_General extends Mage_Adminh
 			'name' => 'store',
 			'value' => $request->getParam('store')
 		));
-
+        
 		$fieldset->addField('plugin_enabled', 'select', array(
 			'name' => 'plugin_enabled',
 			'label' => Mage::helper('sendmachine')->__('Plugin enabled'),

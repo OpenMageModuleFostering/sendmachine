@@ -3,24 +3,29 @@
 class Sendmachine_Sendmachine_Block_AppContainer_Tab_Lists extends Mage_Adminhtml_Block_Widget_Form {
 
 	private $store = null;
+    private $website = null;
 	
 	protected function _prepareForm() {
 
 		$sm = Mage::registry('sm_model');
 		$form = new Varien_Data_Form(array(
-			'id' => 'edit_form',
-			'action' => $this->getUrl('*/*/save'),
-			'method' => 'post'
-				)
-		);
+            'id' => 'edit_form',
+            'action' => $this->getUrl('*/*/save'),
+            'method' => 'post'
+        ));
 
-		$request = Mage::app()->getRequest();
+        $request = Mage::app()->getRequest();
 		$this->store = $request->getParam('store');
+        $this->website = $request->getParam('website');
 		
 		$form->setUseContainer(true);
-
-		$fieldset = $form->addFieldset('lists_fieldset', array('legend' => Mage::helper('sendmachine')->__('List Settings')));
-		$popupfieldset = $form->addFieldset('lists_fieldset_popup', array('legend' => Mage::helper('sendmachine')->__('Popup Settings')));
+        
+        $defaults = $sm->get("is_default");
+        
+        $disabled_lists = isset($defaults['lists']) ? $defaults['lists'] : true;
+        $checkbox_lists = $sm->resetvaluescheckbox($this->store, $this->website, $disabled_lists, "lists");
+		$fieldset = $form->addFieldset('lists_fieldset', array('legend' => Mage::helper('sendmachine')->__('List Settings' . $checkbox_lists)));
+        
 		if($this->store) {
 			$importexport = $form->addFieldset('lists_fieldset_importexport', array('legend' => Mage::helper('sendmachine')->__('Import/Export Users')));
 		}
@@ -69,39 +74,39 @@ class Sendmachine_Sendmachine_Block_AppContainer_Tab_Lists extends Mage_Adminhtm
 			'values' => Mage::getModel('sendmachine/source_importExportLimit')->toOptionArray()
 		));
 
-		$popupfieldset->addField('enable_subscribe_popup', 'select', array(
+		$fieldset->addField('enable_subscribe_popup', 'select', array(
 			'name' => 'enable_subscribe_popup',
 			'label' => Mage::helper('sendmachine')->__('Subscribe popup'),
 			'title' => Mage::helper('sendmachine')->__('Subscribe popup'),
 			'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray()
 		));
 
-		$popupfieldset->addField('popup_show_after_page', 'text', array(
+		$fieldset->addField('popup_show_after_page', 'text', array(
 			'name' => 'popup_show_after_page',
 			'label' => Mage::helper('sendmachine')->__('Show On Page View'),
-			'title' => Mage::helper('sendmachine')->__('Show On Page View'),
+			'title' => Mage::helper('sendmachine')->__('Show On Page View')
 		));
 
-		$popupfieldset->addField('popup_delay', 'text', array(
+		$fieldset->addField('popup_delay', 'text', array(
 			'name' => 'popup_delay',
 			'label' => Mage::helper('sendmachine')->__('Popup Delay (ms)'),
-			'title' => Mage::helper('sendmachine')->__('Popup Delay (ms)'),
+			'title' => Mage::helper('sendmachine')->__('Popup Delay (ms)')
 		));
 
-		$popupfieldset->addField('hide_after_subscribe', 'text', array(
+		$fieldset->addField('hide_after_subscribe', 'text', array(
 			'name' => 'hide_after_subscribe',
 			'label' => Mage::helper('sendmachine')->__('Dismiss popup (s)'),
 			'title' => Mage::helper('sendmachine')->__('Dismiss popup (s)'),
 			'after_element_html' => '<small>' . Mage::helper('sendmachine')->__('Dismiss popup box after successful subscribe or no activity. 0 means no dismiss') . '</small>'
 		));
 
-		$popupfieldset->addField('popup_text_header', 'text', array(
+		$fieldset->addField('popup_text_header', 'text', array(
 			'name' => 'popup_text_header',
 			'label' => Mage::helper('sendmachine')->__("Popup header text"),
-			'title' => Mage::helper('sendmachine')->__("Popup header text"),
+			'title' => Mage::helper('sendmachine')->__("Popup header text")
 		));
 
-		$popupfieldset->addField('popup_custom_fields', 'checkbox', array(
+		$fieldset->addField('popup_custom_fields', 'checkbox', array(
 			'style' => 'display:none',
 			'label' => Mage::helper('sendmachine')->__("Popup custom fields"),
 			'title' => Mage::helper('sendmachine')->__("Popup custom fields"),
