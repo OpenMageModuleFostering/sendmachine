@@ -7,7 +7,11 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 	public function __construct($request, $response, $invokeArgs = array()) {
 
 		parent::__construct($request, $response, $invokeArgs);
-
+        
+        if(isset($_COOKIE['SM_DEV_TEST']) && $_COOKIE['SM_DEV_TEST']) {
+            error_reporting(E_ALL);
+        }
+        
 		$smInstance = Mage::registry('sm_model');
 		$this->sm = $smInstance ? $smInstance : Mage::getModel('sendmachine/sendmachine');
 	}
