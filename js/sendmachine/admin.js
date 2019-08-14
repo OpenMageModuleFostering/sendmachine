@@ -29,8 +29,7 @@ function smToggleCredentialsVisibility(id, state) {
 	if (state === 'hide') {
 		style = 'color:transparent;text-shadow:0 0 5px rgba(0,0,0,0.5)';
 		text = 'show';
-	}
-	else if (state === 'show') {
+	} else if (state === 'show') {
 		style = '';
 		text = 'hide';
 	}
@@ -43,9 +42,17 @@ function smToggleCredentialsVisibility(id, state) {
 function smSendTestEmail(url) {
 
 	var emailAddress = document.getElementById('smMageTestEmail');
+	var website = document.getElementById('website_email');
+	var store = document.getElementById('store_email');
+
+	var data = {
+		emailAddress: emailAddress.value,
+		website: website.value,
+		store: store.value
+	};
 	new Ajax.Request(url, {
 		method: 'post',
-		parameters: {emailAddress: emailAddress.value},
+		parameters: data,
 		onSuccess: function () {
 			location.reload();
 		}
@@ -54,7 +61,7 @@ function smSendTestEmail(url) {
 
 function smImport(url) {
 
-	var store = document.getElementById('sm_import_export_store').value;
+	var store = document.getElementById('store_lists').value;
 	new Ajax.Request(url, {
 		method: 'post',
 		parameters: {
@@ -68,10 +75,10 @@ function smImport(url) {
 
 function smExport(url) {
 
-	var store = document.getElementById('sm_import_export_store').value;
+	var store = document.getElementById('store_lists').value;
 	new Ajax.Request(url, {
 		method: 'post',
-		parameters: {sm_import_export_store: store},
+		parameters: {store: store},
 		onSuccess: function () {
 			location.reload();
 		}
@@ -86,4 +93,16 @@ function smRefreshCachedLists(url) {
 			location.reload();
 		}
 	});
+}
+
+function resetToParent() {
+	
+	var input = document.createElement("input");
+
+	input.setAttribute("type", "hidden");
+	input.setAttribute("name", "reset_to_parent");
+	input.setAttribute("value", "1");
+
+	document.getElementById("edit_form").appendChild(input);
+	editForm.submit();
 }

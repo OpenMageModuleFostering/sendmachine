@@ -9,7 +9,7 @@ class Sendmachine_Sendmachine_Model_Source_TransactionalCampAreas {
 
 	public function toOptionArray() {
 
-		$cl = [];
+		$cl = array();
 		if ($this->sm->get('api_connected')) {
 
 			$cl = Mage::getModel('core/email_template')->getDefaultTemplatesAsOptionsArray();

@@ -14,6 +14,7 @@ class Sendmachine_Sendmachine_Model_Cronjobs {
 
 	public function importToNewsletter($store, $logId, $listId) {
 
+		$this->sm->setStore($store);
 		$this->sm->importMode = true;
 
 		$_limit = $this->sm->get('import_subscribers_limit');
@@ -33,8 +34,6 @@ class Sendmachine_Sendmachine_Model_Cronjobs {
 				$sm_subscribers[] = $val['email'];
 			}
 		}
-
-		Mage::app()->setCurrentStore((int) $store);
 
 		if ($sm_subscribers && count($sm_subscribers)) {
 

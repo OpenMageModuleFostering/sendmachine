@@ -17,7 +17,9 @@ class Sendmachine_Sendmachine_Block_AppContainer_Grid extends Mage_Adminhtml_Blo
 
 	protected function _prepareCollection() {
 
-		$collection = Mage::getResourceModel($this->_getCollectionClass());
+		$store_id = Mage::getModel('core/store')->load($this->getRequest()->getParam('store'), 'code')->getId();
+		
+		$collection = Mage::getResourceModel($this->_getCollectionClass())->addFieldToFilter('store', $store_id);
 		$this->setCollection($collection);
 
 		return parent::_prepareCollection();

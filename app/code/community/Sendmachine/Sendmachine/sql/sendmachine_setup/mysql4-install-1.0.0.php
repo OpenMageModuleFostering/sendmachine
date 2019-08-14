@@ -5,8 +5,8 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
--- DROP TABLE IF EXISTS {$this->getTable('sm_import_export_log')};
-CREATE TABLE {$this->getTable('sm_import_export_log')} (
+	
+CREATE TABLE IF NOT EXISTS `{$this->getTable('sm_import_export_log')}` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `action` ENUM('import','export') NOT NULL,
   `state` ENUM('pending','completed','failed') NOT NULL,

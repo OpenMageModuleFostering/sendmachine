@@ -9,14 +9,12 @@ Class Sendmachine_Sendmachine_Block_PopupBlock extends Mage_Core_Block_Template 
 		$smInstance = Mage::registry('sm_model');
 		$this->sm = $smInstance ? $smInstance : Mage::getModel('sendmachine/sendmachine');
 
-		$store = $this->sm->get('popup_show_on_store');
-		$currentStore = Mage::app()->getStore()->getStoreId();
-
-		if ($this->sm->apiConnected() && $this->sm->get('plugin_enabled') && $this->sm->get('enable_subscribe_popup') && (!$store || $store == $currentStore)) {
-
+		if ($this->sm->apiConnected() && $this->sm->get('plugin_enabled') && $this->sm->get('enable_subscribe_popup')) {
+			
 			$cookie = Mage::getSingleton('core/cookie');
-			if (!$count = $cookie->get('sendmachine_popup_count')) {
-				$cookie->set('sendmachine_popup_count', 1, 3600 * 24 * 365, '/');
+			$cookie_key = 'sendmachine_popup_count_'.Mage::app()->getStore()->getStoreId();
+			if (!$count = $cookie->get($cookie_key)) {
+				$cookie->set($cookie_key, 1, 3600 * 24 * 365, '/');
 				$count = 0;
 			}
 
@@ -24,7 +22,7 @@ Class Sendmachine_Sendmachine_Block_PopupBlock extends Mage_Core_Block_Template 
 
 			if ($configCount > $count) {
 				$count++;
-				$cookie->set('sendmachine_popup_count', $count, 3600 * 24 * 365, '/');
+				$cookie->set($cookie_key, $count, 3600 * 24 * 365, '/');
 
 				if ($configCount == $count) {
 					return true;

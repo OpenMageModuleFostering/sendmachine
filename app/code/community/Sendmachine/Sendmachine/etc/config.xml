@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Sendmachine_Sendmachine>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</Sendmachine_Sendmachine>
 	</modules>
 	<global>
@@ -42,9 +42,9 @@
 			<sendmachine_mysql4>
 				<class>Sendmachine_Sendmachine_Model_Mysql4</class>
 				<entities>
-					<sendmachine>
+					<importexportlog>
 						<table>sm_import_export_log</table>
-					</sendmachine>
+					</importexportlog>
 				</entities>
 			</sendmachine_mysql4>
 		</models>
@@ -72,7 +72,7 @@
 			<email>
 				<smSendTestEmail translate="label" module="sendmachine">
 					<label>Sendmachine Test Email</label>
-					<file>sendmachine/smSendTestEmail.html</file>
+					<file>sendmachine/sm_send_test_email.html</file>
 					<type>html</type>
 				</smSendTestEmail>
 			</email>

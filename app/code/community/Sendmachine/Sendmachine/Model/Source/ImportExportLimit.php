@@ -4,12 +4,12 @@ class Sendmachine_Sendmachine_Model_Source_ImportExportLimit {
 
 	public function toOptionArray() {
 
-		$values = [100, 200, 500, 1000, 5000, 10000];
+		$values = array(100, 200, 500, 1000, 5000, 10000);
 
-		$ret = [];
+		$ret = array();
 		
 		foreach ($values as $val) {
-			array_push($ret, ['value' => $val, 'label' => $val]);
+			array_push($ret, array('value' => $val, 'label' => $val));
 		}
 
 		return $ret;

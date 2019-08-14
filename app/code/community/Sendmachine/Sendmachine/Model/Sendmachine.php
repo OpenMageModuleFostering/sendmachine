@@ -6,18 +6,43 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 
 	protected $api = NULL;
 	protected $appData = NULL;
+	
+	private $website = null;
+	private $store = null;
 
 	protected function _construct() {
 
 		parent::_construct();
 		$this->_init('sendmachine/sendmachine');
 	}
+	
+	public function setWebsite($website = null) {
+		$this->website = $website;
+	}
+	
+	public function getWebsite() {
+		return $this->website;
+	}
+
+	public function setStore($store = null, $setCurrentStore = true) {
+		$this->store = $store;
+		if($this->store AND $setCurrentStore) Mage::app()->setCurrentStore($store);
+	}
+	
+	public function getStore() {
+		return $this->store;
+	}
 
 	public function get($key = NULL, $forceFetch = false) {
 
 		if ($this->appData === NULL || $forceFetch) {
 
-			$tmpData = Mage::getStoreConfig(self::SM_APP, Mage::app()->getStore(0));
+			if ($this->website AND !$this->store) {
+				$tmpData = Mage::app()->getWebsite($this->website)->getConfig(self::SM_APP);
+			} else {
+				$tmpData = Mage::getStoreConfig(self::SM_APP, $this->store);
+			}
+
 			$this->appData = json_decode($tmpData, true);
 		}
 
@@ -76,12 +101,33 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 	}
 
 	public function commit($path = self::SM_APP, $value = NULL) {
+		
+		$scope = "default";
+		$scope_id = 0;
+
+		if ($this->website AND $this->store) {
+			$scope = "stores";
+			$scope_id = Mage::getModel('core/store')->load($this->store, 'code')->getId();
+		} elseif ($this->website) {
+			$websites = Mage::app()->getWebsites();
+			foreach ($websites as $id => $website) {
+				if($website->getCode() == $this->website) {
+					$website_id = $id;
+					continue;
+				}
+			}
+			
+			if(!$website_id) $website_id = 0;
+			
+			$scope = "websites";
+			$scope_id = $website_id;
+		}
 
 		if (is_null($value)) {
 			$value = json_encode($this->appData);
 		}
 
-		Mage::getModel('core/config')->saveConfig($path, $value);
+		Mage::getModel('core/config')->saveConfig($path, $value, $scope, $scope_id);
 		
 		Mage::app()->getCacheInstance()->cleanType('config');
 	}
@@ -134,10 +180,10 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 
 			$savedQueueData = $this->get('sm_cronjob');
 			if (!is_array($savedQueueData)) {
-				$savedQueueData = [];
+				$savedQueueData = array();
 			}
 
-			array_push($savedQueueData, ['method' => $method, 'args' => $args]);
+			array_push($savedQueueData, array('method' => $method, 'args' => $args));
 
 			$this->set('sm_cronjob', $savedQueueData, true);
 		}
@@ -152,7 +198,7 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 		if ($sqd && is_array($sqd) && count($sqd)) {
 
 			foreach ($sqd as $v) {
-				call_user_func_array([Mage::getModel('sendmachine/cronjobs'), $v['method']], $v['args']);
+				call_user_func_array(array(Mage::getModel('sendmachine/cronjobs'), $v['method']), $v['args']);
 			}
 		}
 	}
@@ -241,7 +287,7 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 		}
 	}
 
-	public function subscribeToList($subscribers = [], $listId = NULL) {
+	public function subscribeToList($subscribers = array(), $listId = NULL) {
 
 		try {
 			$this->initApiClass();
@@ -290,10 +336,10 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 				$template_list = Mage::getModel('core/email_template')->getDefaultTemplates();
 				$template_name = $template_list[trim($template_id)]['label'];
 
-				return [
+				return array(
 					"header_name" => "X-Sendmachine-Campaign",
 					"header_value" => $trCmpPrexif . $template_name . $trCmpSuffix
-				];
+				);
 			}
 			return false;
 		}
@@ -302,10 +348,10 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 
 	public function getCredentials() {
 
-		return [
+		return array(
 			"username" => $this->get('api_username'),
 			"password" => $this->get('api_password')
-		];
+		);
 	}
 
 	public function addImportExportLog($action, $state = 'pending', $number = 0, $logId = NULL) {
@@ -319,7 +365,10 @@ class Sendmachine_Sendmachine_Model_Sendmachine extends Mage_Core_Model_Abstract
 					$listName = $v['name'];
 				}
 			}
-			$data = array('action' => $action, 'state' => $state, 'list_name' => $listName, 'sdate' => date('Y-m-d H:i:s'));
+			
+			$store_id = Mage::getModel('core/store')->load($this->store, 'code')->getId();
+
+			$data = array('store' => $store_id, 'action' => $action, 'state' => $state, 'list_name' => $listName, 'sdate' => date('Y-m-d H:i:s'));
 			$this->setData($data);
 			return $this->save()->getId();
 		} else {

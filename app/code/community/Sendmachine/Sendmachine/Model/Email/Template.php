@@ -93,17 +93,21 @@ class Sendmachine_Sendmachine_Model_Email_Template extends Mage_Core_Model_Email
 
 		$mail->setSubject('=?utf-8?B?' . base64_encode($subject) . '?=');
 
+		/* take a look at this chunk of code */
 		$_fromEmail = $sm->get('from_email');
 		$_fromName = $sm->get('from_name');
 
 		$fromEmail = $_fromEmail ? $_fromEmail : $this->getSenderEmail();
 		$fromName = $_fromName ? $_fromName : $this->getSenderName();
+		/* take a look at this chunk of code */
 
 		$mail->setFrom($fromEmail, $fromName);
 
+		/* take a look at this chunk of code */
 		if ($trCmp = $sm->createTransactionalCampaign($this->getId())) {
 			$mail->addHeader($trCmp['header_name'], $trCmp['header_value']);
 		}
+		/* take a look at this chunk of code */
 
 		try {
 			$mail->send();

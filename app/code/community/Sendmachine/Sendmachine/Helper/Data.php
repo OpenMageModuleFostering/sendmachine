@@ -6,11 +6,11 @@ class Sendmachine_Sendmachine_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		if ($smtp_settings) {
 
-			$config = [
+			$config = array(
 				"host" => $smtp_settings['hostname'],
 				"username" => $smtp_settings["username"],
 				"password" => $smtp_settings['password'],
-			];
+			);
 
 			switch ($smtpEncryptionType) {
 				case "SSL":
@@ -87,7 +87,7 @@ class Sendmachine_Sendmachine_Helper_Data extends Mage_Core_Helper_Abstract {
 		if (!$fields || !count($fields))
 			return NULL;
 
-		$_fields = [];
+		$_fields = array();
 		foreach ($fields as $v) {
 
 			if (!isset($v['form_name']))

@@ -4,21 +4,49 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 	private $sm;
 
-	public function __construct($request, $response, $invokeArgs = []) {
+	public function __construct($request, $response, $invokeArgs = array()) {
 
 		parent::__construct($request, $response, $invokeArgs);
 
 		$smInstance = Mage::registry('sm_model');
 		$this->sm = $smInstance ? $smInstance : Mage::getModel('sendmachine/sendmachine');
 	}
+	
+	/* MAGENTO PLUGIN CONFIGURATION ACTIONS */
 
 	private function _renderApp($tab = '') {
 
 		Mage::register('sm_model', $this->sm);
+		
+		$request = Mage::app()->getRequest();
+		$website = $request->getParam('website');
+		$store = $request->getParam('store');
+		$button_data = null;
+
+		$this->sm->setWebsite($website);
+		$this->sm->setStore($store, false);
+		
+		if ($website AND $store) {
+			$button_data = array(
+				'label' => $this->__('Reset values to website'),
+				'class' => 'reset_to_parent',
+				'onclick' => "resetToParent('" . Mage::helper('adminhtml')->getUrl('adminhtml/sendmachine/resetoparent') . "', '$website', '$store', 'website')"
+			);
+		} elseif ($website) {
+			$button_data = array(
+				'label' => $this->__('Reset values to default'),
+				'class' => 'reset_to_parent',
+				'onclick' => "resetToParent('" . Mage::helper('adminhtml')->getUrl('adminhtml/sendmachine/resetoparent') . "', '$website', '$store', 'default')"
+			);
+		}
 
 		$this->loadLayout();
 		$this->_setActiveMenu('system/sendmachine');
-		$this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', ['tab' => $tab]));
+		$this->_addContent($this->getLayout()->createBlock('adminhtml/system_config_switcher'));
+		if($button_data) {
+			$this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', array('tab' => $tab))->addButton('reset_to_parent', $button_data, -1, 1));
+		}
+		else $this->_addContent($this->getLayout()->createBlock('sendmachine/appContainer_main', 'smMainFormContainer', array('tab' => $tab)));
 		$this->_addLeft($this->getLayout()->createBlock('sendmachine/appContainer_tabs'));
 		$this->getLayout()->getBlock('head')->addJs("sendmachine/admin.js");
 		$this->renderLayout();
@@ -46,12 +74,36 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 		$params = $this->getRequest()->getParams();
 		$tab = isset($params['tab']) ? $params['tab'] : "index";
-
+		$website = $params['website'];
+		$store = $params['store'];
+		
 		unset($params['tab']);
 		unset($params['limit']);
 		unset($params['page']);
 		unset($params['key']);
 		unset($params['form_key']);
+		unset($params['website']);
+		unset($params['store']);
+		
+		if(isset($params['reset_to_parent']) AND $params['reset_to_parent'] AND ($website OR $store)) {
+			
+			if($store AND $website) {
+				$this->sm->setWebsite($website);
+				$this->sm->setStore(null, false);				
+			}
+			else {
+				$this->sm->setWebsite(null);
+				$this->sm->setStore(null, false);
+			}
+			
+			$_params = $this->sm->get();
+			foreach($params as $k => &$v) {
+				$v = isset($_params[$k]) ? $_params[$k] : "";
+			}
+		}
+		
+		$this->sm->setWebsite($website);
+		$this->sm->setStore($store);
 
 		$initial_credentials = $this->sm->getCredentials();
 		$initial_listid = $this->sm->get('selected_contact_list');
@@ -64,13 +116,15 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 		if ($initial_credentials != $credentials) {
 
-			if (($connectApi = $this->sm->connectApi()) === true)
+			if (($connectApi = $this->sm->connectApi()) === true) {
 				$this->_initApp();
+			}
 
 			else {
 
-				if (!$connectApi)
+				if (!$connectApi) {
 					$connectApi = "Unexpected error occurred!";
+				}
 
 				$errorHandled = true;
 				Mage::getSingleton('adminhtml/session')->addError($this->__($connectApi));
@@ -93,13 +147,27 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 		$this->sm->commit();
 
-		if (!$errorHandled)
+		if (!$errorHandled) {
 			Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Successfully saved'));
-		$this->getResponse()->setRedirect($this->getUrl("*/*/" . $tab));
+		}
+		
+		$suffix = "";
+		if($website) $suffix .= "/website/$website";
+		if($store) $suffix .= "/store/$store";
+		
+		$this->getResponse()->setRedirect($this->getUrl("*/*/" . $tab . $suffix));
 	}
 
+	
+	/* MAGENTO ADMIN ACTIONS */
+	
 	public function sendtestmailAction() {
-
+		
+		$request = Mage::app()->getRequest();
+		
+		$this->sm->setWebsite($request->getParam('website'));
+		$this->sm->setStore($request->getParam('store'));
+		
 		if (!$this->sm->apiConnected()) {
 
 			Mage::getSingleton('adminhtml/session')->addError($this->__('Api not connected'));
@@ -113,27 +181,27 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 
 		$mailer = Mage::getModel('core/email_template');
 
-		$recipientEmail = $this->getRequest()->getParam('emailAddress');
+		$recipientEmail = $request->getParam('emailAddress');
 
 		$sender['name'] = Mage::getStoreConfig('trans_email/ident_general/name');
 		$sender['email'] = Mage::getStoreConfig('trans_email/ident_general/email');
 
-		$result = $mailer->sendTransactional("smSendTestEmail", $sender, $recipientEmail);
+		$result = $mailer->sendTransactional("smSendTestEmail", $sender, $recipientEmail, null, array(), $this->sm->getStore());
 
-		if ($result->sent_success)
+		if ($result->sent_success) {
 			Mage::getSingleton('adminhtml/session')->addSuccess(sprintf($this->__("Test message to '%s' sent successfully"), $recipientEmail));
-		else
+		} else {
 			Mage::getSingleton('adminhtml/session')->addError($this->__('Something went wrong, message not sent'));
+		}
 	}
 
 	public function importToNewsletterAction() {
 
+		$store = $this->getRequest()->getParam('store');
+		$this->sm->setStore($store);
+
 		if ($this->sm->apiConnected()) {
 
-			$store = $this->getRequest()->getParam('store');
-			if (!$store) {
-				$store = Mage::app()->getWebsite(true)->getDefaultGroup()->getDefaultStoreId();
-			}
 			$logId = $this->sm->addImportExportLog('import');
 			$listId = $this->sm->get('selected_contact_list');
 
@@ -147,17 +215,19 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 	}
 
 	public function exportToSendmachineAction() {
+		
+		$store = $this->getRequest()->getParam('store');
+		$this->sm->setStore($store);
 
 		if ($this->sm->apiConnected()) {
 
-			$subscribe_status = [Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED];
+			$subscribe_status = array(Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED);
 
 			$logId = $this->sm->addImportExportLog('export');
 
-			$store = $this->getRequest()->getParam('sm_import_export_store');
 			$limit = $this->sm->get('export_subscribers_limit');
 			$subscribers = Mage::getModel('newsletter/subscriber')->getCollection()->setPageSize((int) $limit);
-			$_subscribers = [];
+			$_subscribers = array();
 
 			if ($subscribers && count($subscribers)) {
 

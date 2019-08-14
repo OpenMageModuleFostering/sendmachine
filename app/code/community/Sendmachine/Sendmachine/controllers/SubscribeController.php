@@ -12,14 +12,14 @@ class Sendmachine_Sendmachine_SubscribeController extends Mage_Core_Controller_F
 		$fields = $sm->get('list_custom_fields');
 		$response = NULL;
 		if (!$fields || !count($fields)) {
-			$response = ['code' => 0, 'message' => $this->__('Something went wrong.You were not subscribed')];
+			$response = array('code' => 0, 'message' => $this->__('Something went wrong.You were not subscribed'));
 		} else {
 
-			$arr = [];
+			$arr = array();
 			foreach ($fields as $k => $v) {
 
 				if ($v['required'] && empty($params[$k])) {
-					$response = ['code' => 0, 'message' => $this->__('Required data was not filled')];
+					$response = array('code' => 0, 'message' => $this->__('Required data was not filled'));
 					break;
 				}
 
@@ -31,14 +31,13 @@ class Sendmachine_Sendmachine_SubscribeController extends Mage_Core_Controller_F
 
 				$listId = $sm->get('selected_contact_list');
 				if ($sm->subscribeToList([$arr], $listId))
-					$response = ['code' => 1, 'message' => $this->__('You have been successfully subscribed')];
+					$response = array('code' => 1, 'message' => $this->__('You have been successfully subscribed'));
 				else
-					$response = ['code' => 0, 'message' => $this->__('Something went wrong.You were not subscribed')];
+					$response = array('code' => 0, 'message' => $this->__('Something went wrong.You were not subscribed'));
 			}
 		}
 
 		$this->getResponse()->clearHeaders()->setHeader('Content-type', 'application/json', true);
 		$this->getResponse()->setBody(json_encode($response));
 	}
-
 }

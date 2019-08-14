@@ -3,10 +3,10 @@
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
-    "description": "Official Sendmachine plugin featuring subscribe popup, users sync, email sending and transactional campaigns.",
+    "description": "Sendmachine extension featuring subscribe popup, user import/export, email sending and transactional campaigns",
     "authors": [
     {
-        "name": "Sendmachine Team",
+        "name": "Sendmachine",
         "email": "support@sendmachine.com"
     }
 ],
