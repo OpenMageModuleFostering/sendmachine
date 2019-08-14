@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>sendmachine</name>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <stability>stable</stability>
     <license uri="http://www.opensource.org/licenses/osl-3.0.php">OSL</license>
     <channel>community</channel>
@@ -32,7 +32,7 @@
 		&lt;/li&gt;&#xD;
 	&lt;/ul&gt;&#xD;
 &lt;/div&gt;</description>
-    <notes>Stable release. Included multistore support.</notes>
+    <notes>Stable release. Included multistore support. List minor fix</notes>
     <authors><author><name>Sendmachine</name><user>sendmachine</user><email>support@sendmachine.com</email></author></authors>
     <date>2016-07-13</date>
     <time>06:07:57</time>

@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Sendmachine_Sendmachine>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</Sendmachine_Sendmachine>
 	</modules>
 	<global>
@@ -42,9 +42,9 @@
 			<sendmachine_mysql4>
 				<class>Sendmachine_Sendmachine_Model_Mysql4</class>
 				<entities>
-					<importexportlog>
+					<sendmachine>
 						<table>sm_import_export_log</table>
-					</importexportlog>
+					</sendmachine>
 				</entities>
 			</sendmachine_mysql4>
 		</models>
