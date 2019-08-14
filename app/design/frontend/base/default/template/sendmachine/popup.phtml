@@ -1,0 +1,39 @@
+
+<?php
+if (!$this->displayPopup()) {
+	return;
+}
+?>
+<div onClick="smDismissPopup();" id="sm_popup_box_wrapper">
+	<table id="sm_popup_box_table">
+		<tr>
+			<td style="vertical-align:middle">
+				<div id="sm_popup_box_inner" onclick="smStopEventPropagation();smSubscribeHasActivity=true">
+					<div id="sm_popup_box_loader" ></div>
+					<div id="sm_popup_box_header">
+						<button id="sm_popup_box_close_button" onClick="smDismissPopup();" style="" >CLOSE</button>
+						<div style="clear:both" ></div>
+					</div>
+					<div id="sm_popup_box_main">
+						<div id="sm_popup_box_notification_area"></div>
+						<div id="sm_popup_box_description">
+							<?php echo $this->popupDescription(); ?>
+						</div>
+						<div id="sm_popup_box_content_form" >
+							<form onsubmit="smSubscribeCustomer(this, <?php echo $this->getSubscribePopupDelay(); ?>);return false;" action="<?php echo $this->getPostUrl() ?>">
+								<?php
+								echo $this->formData();
+								?>
+								<input type="submit" value="SUBSCRIBE" id="sm_popup_box_submit_button" />
+							</form>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<script>
+	smDisplayPopup(<?php echo $this->getPopupDelay() ?>);
+	smDismissNoActivity(<?php echo $this->getSubscribePopupDelay() ?>);
+</script>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<default translate="label" module="sendmachine">
+		<reference name="before_body_end">
+			<block type="sendmachine/popupBlock" name="sendmachine.popupBlock" template="sendmachine/popup.phtml" />
+		</reference>
+		<reference name="head">
+			<action method="addItem">
+				<type>skin_js</type>
+				<name>sendmachine/frontend.js</name>
+			</action>
+			<action method="addItem">
+				<type>skin_css</type>
+				<name>sendmachine/frontend.css</name>
+			</action>
+		</reference>
+	</default>
+</layout>

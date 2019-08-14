@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/sendmachine",
+    "type": "magento-module",
+    "license": "OSL",
+    "homepage": "",
+    "description": "Official Sendmachine plugin featuring subscribe popup, users sync, email sending and transactional campaigns.",
+    "authors": [
+    {
+        "name": "Sendmachine Team",
+        "email": "support@sendmachine.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
