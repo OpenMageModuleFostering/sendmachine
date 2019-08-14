@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>sendmachine</name>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <stability>stable</stability>
     <license uri="http://www.opensource.org/licenses/osl-3.0.php">OSL</license>
     <channel>community</channel>

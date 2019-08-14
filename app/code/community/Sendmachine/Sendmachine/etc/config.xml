@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Sendmachine_Sendmachine>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 		</Sendmachine_Sendmachine>
 	</modules>
 	<global>

@@ -26,6 +26,21 @@ class Sendmachine_Sendmachine_SendmachineController extends Mage_Adminhtml_Contr
 		$this->sm->setWebsite($website);
 		$this->sm->setStore($store, false);
 		
+		$conflicts = array();
+		$rewrites = Mage::getConfig()->getNode()->xpath('//global//rewrite');
+		if (is_array($rewrites) && !empty($rewrites)) {
+			foreach ($rewrites as $v) {
+				if (array_key_exists('email', $v)) {
+					array_push($conflicts, (string)$v->email);
+				}
+			}
+		}
+		
+		if($conflicts) {
+			$conflicts = implode("</li><li>", $conflicts);
+			Mage::getSingleton('core/session')->addError("<span>Detected overwrite conflict:</span><ul style='list-style-type: disc;margin-top: 5px;'><li>$conflicts</li></ul>");
+		}
+		
 		if ($website AND $store) {
 			$button_data = array(
 				'label' => $this->__('Reset values to website'),
