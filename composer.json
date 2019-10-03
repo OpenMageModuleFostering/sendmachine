@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/sendmachine",
+    "name": "OpenMageModuleFostering\/sendmachine",
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
-    "description": "Sendmachine extension featuring subscribe popup, user import/export, email sending and transactional campaigns",
+    "description": "Sendmachine extension featuring subscribe popup, user import\/export, email sending and transactional campaigns",
     "authors": [
-    {
-        "name": "Sendmachine",
-        "email": "support@sendmachine.com"
-    }
-],
+        {
+            "name": "Sendmachine",
+            "email": "support@sendmachine.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
